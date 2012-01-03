@@ -17,6 +17,7 @@
  */
 package de.hu_berlin.german.korpling.saltnpepper.pepperModules.treetagger;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -131,6 +132,11 @@ public class TreetaggerExporter extends PepperExporterImpl implements PepperExpo
 	private String PROP_EXPORT_ANNOS= "treetagger.exportAnnotations";
 	
 	/**
+	 * Keyword for property
+	 */
+	private String  PROP_FLATTEN = "treetagger.output.flatten";
+	
+	/**
 	 * Extension for export file. default= tt.
 	 */
 	private String fileExtension= "tt";
@@ -180,7 +186,12 @@ public class TreetaggerExporter extends PepperExporterImpl implements PepperExpo
 					}
 				}
 			}
-			this.createFolderStructure(sElementId);
+			//set "flatten output"
+			boolean flattenOutput = false;
+			if (	(this.getProps()!= null) &&
+					(this.getProps().getProperty(PROP_FLATTEN)!= null))
+				flattenOutput = this.getProps().getProperty(PROP_FLATTEN).equalsIgnoreCase("true");
+			
 			if (((SDocument)sElementId.getSIdentifiableElement()).getSDocumentGraph()!= null)
 			{
 				SDocument sDocument = (SDocument)sElementId.getSIdentifiableElement();
@@ -191,8 +202,18 @@ public class TreetaggerExporter extends PepperExporterImpl implements PepperExpo
 				mapper.setLogService(this.getLogService());
 
 				mapper.map(sDocument,tDocument);
-				//create uri to save
-				URI uri= URI.createFileURI(this.getCorpusDefinition().getCorpusPath().toFileString()+ "/" + sElementId.getSId()+ "/" + tDocument.getName()+ "."+fileExtension);
+				
+				String corpusPath = this.getCorpusDefinition().getCorpusPath().toFileString();
+				String docPath    = sElementId.getSElementPath().toString();
+				String docName    = tDocument.getName()+ "." + fileExtension;
+
+				File path = null;
+				if (flattenOutput) { path = new File(corpusPath);           }
+				else               { path = new File(corpusPath + docPath); }
+				
+				path.mkdirs();
+				URI uri = URI.createFileURI(path.toString() + '/' + docName);				
+				
 				try {
 					this.saveToFile(uri, tDocument);
 				} catch (IOException e) {
