@@ -120,10 +120,6 @@ public class Salt2TreetaggerMapper {
 		
 		if (this.numOfSTokensWithMultiplePOSAnnos>0) {
 			logWarning("There were "+this.numOfSTokensWithMultiplePOSAnnos+" tokens with more than one POS annotation in the document. The first one found for each token was used for it´s POS annotation; the remainder was used for ordinary annotations.");
-			
-			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + numOfSTokensWithMultiplePOSAnnos);
-			
-			
 		}
 		if (this.numOfSTokensWithMultipleLemmaAnnos>0) {
 			logWarning("There were "+this.numOfSTokensWithMultipleLemmaAnnos+" tokens with more than one lemma annotation in the document. The first one found for each token was used for it´s lemma annotation; the remainder was used for ordinary annotations.");
