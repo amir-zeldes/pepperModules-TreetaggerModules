@@ -19,6 +19,7 @@ package de.hu_berlin.german.korpling.saltnpepper.pepperModules.treetagger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -46,6 +47,8 @@ import de.hu_berlin.german.korpling.saltnpepper.pepper.pepperModules.RETURNING_M
 import de.hu_berlin.german.korpling.saltnpepper.pepper.pepperModules.impl.PepperImporterImpl;
 import de.hu_berlin.german.korpling.saltnpepper.pepperModules.treetagger.exceptions.TreetaggerImporterException;
 import de.hu_berlin.german.korpling.saltnpepper.pepperModules.treetagger.mapper.Treetagger2SaltMapper;
+import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.SaltCommonFactory;
+import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SCorpus;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SCorpusGraph;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCommon.sCorpusStructure.SDocument;
 import de.hu_berlin.german.korpling.saltnpepper.salt.saltCore.SElementId;
@@ -171,7 +174,6 @@ public class TreetaggerImporter extends PepperImporterImpl implements PepperImpo
 				if (uri== null)
 					throw new TreetaggerImporterException("Cannot import document '"+sElementId+"', because no corresponding uri was found.");
 				
-				
 				if (this.getSpecialParams()!=null) {
 					String propertyFileName = this.getSpecialParams().toFileString();
 					try {
@@ -182,24 +184,27 @@ public class TreetaggerImporter extends PepperImporterImpl implements PepperImpo
 					}
 				}
 
-				Document tDocument = this.loadFromFile(uri);
-				if (tDocument==null) {
-					//TODO: take document out of the process
+				Treetagger2SaltMapper mapper = new Treetagger2SaltMapper();
+				mapper.setProperties(this.getProperties());
+				mapper.setLogService(this.getLogService());
+
+				//this importer can find multiple documents in the input file,
+				//but only one SDocument can be handled
+				ArrayList<Document> tDocuments = this.loadFromFile(uri);
+							
+				if (tDocuments.size()>1) {
+					logWarning(String.format("Multiple documents found in file '%s'. At this time, TreetaggerImporter is restricted to handling one document per file.",uri.toFileString()));
 				}
-				else {
-					Treetagger2SaltMapper mapper = new Treetagger2SaltMapper();
-					mapper.setProperties(this.getProperties());
-					mapper.setLogService(this.getLogService());
-					mapper.map(tDocument,this.getSCorpusGraph().getSDocument(sElementId));
-				}
+				//map the first tDocument to the SDocument 
+				mapper.map(tDocuments.get(0), this.getSCorpusGraph().getSDocument(sElementId));
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Document loadFromFile(URI uri)
+	private ArrayList<Document> loadFromFile(URI uri)
 	{
-		Document retVal= null;
+		ArrayList<Document> docList = new ArrayList<Document>();
 		if (uri!= null)
 		{
 			// create resource set and resource 
@@ -232,11 +237,11 @@ public class TreetaggerImporter extends PepperImporterImpl implements PepperImpo
 			{	throw new TreetaggerImporterException("Cannot load resource '"+uri+"'.");	}
 			catch (NullPointerException e) 
 			{	throw new TreetaggerImporterException("Cannot load resource '"+uri+"'.");	}
-			if (resource.getContents().size()>0) {
-				retVal= (Document) resource.getContents().get(0);
+			for (Object content : resource.getContents()) {
+				docList.add((Document)content);
 			}
 		}
-		return(retVal);
+		return docList;
 	}
 	
 	protected void activate(ComponentContext componentContext) 
