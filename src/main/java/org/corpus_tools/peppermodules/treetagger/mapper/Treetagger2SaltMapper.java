@@ -136,7 +136,7 @@ public class Treetagger2SaltMapper extends PepperMapperImpl implements PepperMap
 				if (!spanTable.containsKey(tSpan)) {
 					sSpan = SaltFactory.createSSpan();
 					spanTable.put(tSpan, sSpan);
-					sSpan.setGraph(sDocument.getDocumentGraph());
+					sDocument.getDocumentGraph().addNode(sSpan);
 					sSpan.setName(tSpan.getName());
 					List<Annotation> tAnnotations = tSpan.getAnnotations();
 					if ((annotateAllSpansWithSpanName) || ((tAnnotations.size() == 0) && (annotateUnannotatedSpans))) {
@@ -152,7 +152,7 @@ public class Treetagger2SaltMapper extends PepperMapperImpl implements PepperMap
 				SSpanningRelation sSpanningRelation = SaltFactory.createSSpanningRelation();
 				sSpanningRelation.setSource(sSpan);
 				sSpanningRelation.setTarget(sToken);
-				sSpanningRelation.setGraph(sDocument.getDocumentGraph());
+				sDocument.getDocumentGraph().addRelation(sSpanningRelation);
 			}
 
 			STextualRelation sTextRel = this.createSTextualRelation(sToken, sText, start, end);
