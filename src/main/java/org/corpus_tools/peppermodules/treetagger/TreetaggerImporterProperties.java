@@ -40,13 +40,20 @@ public class TreetaggerImporterProperties extends PepperModuleProperties {
 	 * To shut of the adding of a separator, just this property value to "".
 	 **/
 	public static final String PROP_SEPARATOR_AFTER_TOKEN = PREFIX + "separatorAfterToken";
+        /**
+        * Set to true to add the element name as a prefix to all span element attribute annotations.
+        **/
+        public static final String PROP_PREFIX_SPAN_ANNOS_WITH_ELEMENT = PREFIX + "prefixElementToAttributes";
+        public static final String PROP_PREFIX_ELEMENT_SEPARATOR = PREFIX + "prefixElementSeparator";
 
 	public TreetaggerImporterProperties() {
 		this.addProperty(new PepperModuleProperty<Boolean>(PROP_ANNOTATE_UNANNOTATED_SPANS, Boolean.class, "If set true, this switch will cause the module to annotate all spans without attributes with their name as attribute and value.", false, false));
 		this.addProperty(new PepperModuleProperty<Boolean>(PROP_ANNOTATE_ALL_SPANS_WITH_NAME, Boolean.class, "If set true, this switch will cause the module to annotate all spans with their name as attribute and value.", false, false));
 		this.addProperty(new PepperModuleProperty<String>(PROP_META_TAG, String.class, "States the meta tag used to mark the TreeTagger document in the input file(s).", "meta", false));
 		this.addProperty(new PepperModuleProperty<String>(PROP_SEPARATOR_AFTER_TOKEN, String.class, "Determines the separator which should be artificially added after a token, when mapping treetagger token to STextualDS in Salt. The default separator is a whitespace given by the character sequence \" \". Note, the separator sequence, must be surrunded by double quotes. To shut of the adding of a separator, just this property value to \"\"", " ", false));
-	}
+		this.addProperty(new PepperModuleProperty<Boolean>(PROP_PREFIX_SPAN_ANNOS_WITH_ELEMENT, Boolean.class, "Set to true to add the element name as a prefix to all span element attribute annotations.", false, false));
+		this.addProperty(new PepperModuleProperty<String>(PROP_PREFIX_ELEMENT_SEPARATOR, String.class, "Separator to use when prefixing span attribute annotations with element name.", "_", false));
+        }
 
 	public Boolean getAnnotateUnannotatedSpans() {
 		return ((Boolean) this.getProperty(PROP_ANNOTATE_UNANNOTATED_SPANS).getValue());
@@ -56,6 +63,14 @@ public class TreetaggerImporterProperties extends PepperModuleProperties {
 		return ((Boolean) this.getProperty(PROP_ANNOTATE_ALL_SPANS_WITH_NAME).getValue());
 	}
 
+        public Boolean getPrefixSpanAnnotation() {
+		return ((Boolean) this.getProperty(PROP_PREFIX_SPAN_ANNOS_WITH_ELEMENT).getValue());
+	}
+
+        public String getPrefixSpanSeparator(){
+                return (String) this.getProperty(PROP_PREFIX_ELEMENT_SEPARATOR).getValue();
+        }
+        
 	/**
 	 * Returns the separator to be used to separate the text covered by
 	 * {@link SToken}.

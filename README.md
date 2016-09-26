@@ -196,6 +196,18 @@ The following table contains an overview of all usable properties to customize t
 <td align="left">optional</td>
 <td align="left">&quot; &quot;</td>
 </tr>
+<tr class="odd">
+<td align="left">treetagger.input.prefixElementToAttributes</td>
+<td align="left">Boolean</td>
+<td align="left">optional</td>
+<td align="left">false</td>
+</tr>
+<tr class="even">
+<td align="left">treetagger.input.prefixElementSeparator</td>
+<td align="left">String</td>
+<td align="left">optional</td>
+<td align="left">_</td>
+</tr>
 </tbody>
 </table>
 
@@ -218,6 +230,15 @@ Determines the separator which should be artificially added after a token, when 
 > **Note**
 >
 > The separator sequence, must be surrounded by double quotes. To shut of the adding of a separator, just this property value to "".
+
+### treetagger.input.prefixElementToAttributes
+
+Choose whether to prefix the element name to all span annotation attributes. For example, if set to true, then for a span <date when="2016">, the 'when' annotation becomes date_when (the default separator is `_` and can be configured).
+
+### treetagger.input.prefixElementSeparator
+
+The string to use to separate element and attribute name when using the prefixElementToAttributes option. By default this is '_' ,so that for a span <date when="2016">, the 'when' annotation becomes date_when="2016".
+
 
 
 #<a name="details_ex"/>TreetaggerExporter
