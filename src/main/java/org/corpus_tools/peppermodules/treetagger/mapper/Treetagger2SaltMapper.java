@@ -102,8 +102,6 @@ public class Treetagger2SaltMapper extends PepperMapperImpl implements PepperMap
 		boolean annotateUnannotatedSpans = this.getProps().getAnnotateUnannotatedSpans();
 
 		boolean annotateAllSpansWithSpanName = this.getProps().getAnnotateAllSpansWithName();
-                boolean prefixSpanAnnotation = this.getProps().getPrefixSpanAnnotation();
-                String prefixSpanSeparator = this.getProps().getPrefixSpanSeparator();
 
 		// creating and adding STextualDS
 		STextualDS sText = SaltFactory.createSTextualDS();
@@ -146,9 +144,6 @@ public class Treetagger2SaltMapper extends PepperMapperImpl implements PepperMap
 					}
 					for (int j = 0; j < tAnnotations.size(); j++) {
 						SAnnotation anno = this.createAnnotation(tSpan.getAnnotations().get(j));
-                                                if (prefixSpanAnnotation){
-                                                    anno.setName(tSpan.getName() + prefixSpanSeparator + anno.getName());
-                                                }
 						sSpan.addAnnotation(anno);
 					}
 				} else {
